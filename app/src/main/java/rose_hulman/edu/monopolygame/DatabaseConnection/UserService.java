@@ -10,7 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Base64;
 import java.util.Random;
 
 import javax.crypto.SecretKeyFactory;
@@ -31,9 +30,11 @@ public class UserService {
     }
 
     public boolean login(String username, String password) {
+        if (username.equals("") || password.equals("") || username == null || password == null) {
+            return false;
+        }
         try {
             Connection con = this.dbService.getConnection();
-            con.setAutoCommit(false);
             String query = "select PasswordSalt, PasswordHash from User where Username = ?";
             PreparedStatement stmt = con.prepareStatement(query);
             stmt.setString(1, username);
@@ -52,11 +53,13 @@ public class UserService {
     }
 
     public boolean register(String username, String password) {
+        if (username.equals("") || password.equals("") || username == null || password == null) {
+            return false;
+        }
         byte[] salt = getNewSalt();
         String pwHash = hashPassword(salt, password);
         try {
             Connection con = this.dbService.getConnection();
-            con.setAutoCommit(false);
             CallableStatement cs;
             cs = con.prepareCall("{?=call Register(?,?,?)}");
             //TODO: Change stored procedure

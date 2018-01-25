@@ -1,9 +1,10 @@
 package rose_hulman.edu.monopolygame.Game;
 
+import android.app.Fragment;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,12 @@ import rose_hulman.edu.monopolygame.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link GameMap.OnFragmentInteractionListener} interface
+ * {@link GameMapFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link GameMap#newInstance} factory method to
+ * Use the {@link GameMapFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GameMap extends Fragment {
+public class GameMapFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -30,7 +31,7 @@ public class GameMap extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public GameMap() {
+    public GameMapFragment() {
         // Required empty public constructor
     }
 
@@ -40,11 +41,11 @@ public class GameMap extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment GameMap.
+     * @return A new instance of fragment GameMapFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static GameMap newInstance(String param1, String param2) {
-        GameMap fragment = new GameMap();
+    public static GameMapFragment newInstance(String param1, String param2) {
+        GameMapFragment fragment = new GameMapFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -59,6 +60,8 @@ public class GameMap extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        getActivity().setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//Switch to landscape
     }
 
     @Override
@@ -82,7 +85,7 @@ public class GameMap extends Fragment {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement GameRoomFragmentListener");
         }
     }
 

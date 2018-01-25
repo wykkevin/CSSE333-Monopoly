@@ -1,6 +1,6 @@
 package rose_hulman.edu.monopolygame.Lobby;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,7 +16,7 @@ import rose_hulman.edu.monopolygame.R;
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link GameInfoFragmentListener}
  * interface.
  */
 public class GameInfoFragment extends Fragment {
@@ -25,7 +25,7 @@ public class GameInfoFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+    private GameInfoFragmentListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -58,6 +58,7 @@ public class GameInfoFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_gameinfo_list, container, false);
 
+
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
@@ -76,11 +77,11 @@ public class GameInfoFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof GameInfoFragmentListener) {
+            mListener = (GameInfoFragmentListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+                    + " must implement GameInfoFragmentListener");
         }
     }
 
@@ -100,8 +101,8 @@ public class GameInfoFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
+    public interface GameInfoFragmentListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(GameInfo item);
+        void onGameInfoFragmentInteraction(GameInfo item);
     }
 }

@@ -4,6 +4,8 @@ package rose_hulman.edu.monopolygame.DatabaseConnection;
  * Created by Hao Yang on 1/23/2018.
  */
 
+import android.util.Log;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -18,18 +20,21 @@ public class DatabaseConnectionService {
     private volatile static DatabaseConnectionService service;
 
     private DatabaseConnectionService(String serverName, String databaseName) {
+        Log.d("DBCONNECT","Created Connection Service");
         this.serverName = serverName;
         this.databaseName = databaseName;
     }
 
     public boolean connect(String user, String pass) {
         String connectionString = url.replace("${dbServer}", serverName).replace("${dbName}", databaseName).replace("${user}", user).replace("${pass}", pass);
-        // Declare the JDBC objects.
+        Log.d("DBCONNECT",connectionString);
         try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(connectionString);
+            Log.d("DBCONNECT","DB connection successful");
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.d("DBCONNECT","DB connection failed");
             return false;
         }
     }
