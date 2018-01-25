@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CSSE333-Monopoly.iml" filepath="$PROJECT_DIR$/CSSE333-Monopoly.iml" />
+      <module fileurl="file://C:\Users\yangh4\Desktop\RHIT\2017 02\CSSE 333\MonopolyGame\CSSE333-Monopoly.iml" filepath="C:\Users\yangh4\Desktop\RHIT\2017 02\CSSE 333\MonopolyGame\CSSE333-Monopoly.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MonopolyGame.iml" filepath="$PROJECT_DIR$/MonopolyGame.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
