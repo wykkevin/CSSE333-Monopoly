@@ -34,7 +34,7 @@ public class DatabaseConnectionService {
             Log.d("DBCONNECT","DB connection successful");
             return true;
         } catch (Exception e) {
-            Log.d("DBCONNECT","DB connection failed");
+            Log.d("DBCONNECT","DB connection failed because of "+ e.toString());
             return false;
         }
     }
