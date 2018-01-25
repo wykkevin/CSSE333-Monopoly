@@ -31,21 +31,18 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        // Set up the login form.
-        //Test
-        //WWK Commit
-        mUserView = (EditText) findViewById(R.id.username);
+        mUserView = findViewById(R.id.username);
         dbService = DatabaseConnectionService.getInstance(Informations.serverName,Informations.databaseName);
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView = findViewById(R.id.password);
         userService = new UserService(dbService);
-        Button mUserSignInButton = (Button) findViewById(R.id.user_sign_in_button);
+        Button mUserSignInButton = findViewById(R.id.user_sign_in_button);
         mUserSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin(mUserView.getText().toString(),mPasswordView.getText().toString());
             }
         });
-        Button mUserRegButton = (Button) findViewById(R.id.user_reg_button);
+        Button mUserRegButton = findViewById(R.id.user_reg_button);
         mUserRegButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
