@@ -10,8 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import rose_hulman.edu.monopolygame.Lobby.dummy.DummyContent;
-import rose_hulman.edu.monopolygame.Lobby.dummy.DummyContent.DummyItem;
+import rose_hulman.edu.monopolygame.Lobby.GameInfoContent.GameInfo;
 import rose_hulman.edu.monopolygame.R;
 
 /**
@@ -68,7 +67,7 @@ public class GameInfoFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyGameInfoRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyGameInfoRecyclerViewAdapter(GameInfoContent.ITEMS, mListener));
         }
         return view;
     }
@@ -103,6 +102,6 @@ public class GameInfoFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(GameInfo item);
     }
 }
