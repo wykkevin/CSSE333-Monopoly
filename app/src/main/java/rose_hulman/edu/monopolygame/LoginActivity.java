@@ -32,6 +32,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
+        //Test
         mUserView = (EditText) findViewById(R.id.username);
         dbService = DatabaseConnectionService.getInstance(Informations.serverName,Informations.databaseName);
         mPasswordView = (EditText) findViewById(R.id.password);
