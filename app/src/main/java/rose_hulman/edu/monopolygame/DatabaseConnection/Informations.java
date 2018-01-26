@@ -5,7 +5,7 @@ package rose_hulman.edu.monopolygame.DatabaseConnection;
  */
 
 public class Informations {
-    public static String databaseName = "1-7 Monopoly";
+    public static String databaseName = "[1-7 Monopoly]";
     public static String serverUsername = "yangh4";
     public static String serverPassword = "YangHao981217";
     public static String serverName = "golem.csse.rose-hulman.edu";

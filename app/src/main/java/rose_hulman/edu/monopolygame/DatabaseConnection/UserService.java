@@ -1,5 +1,7 @@
 package rose_hulman.edu.monopolygame.DatabaseConnection;
 
+import android.util.Log;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -30,24 +32,37 @@ public class UserService {
     }
 
     public boolean login(String username, String password) {
+        Log.d("LOGIN", "Username:"+username);
+        Log.d("LOGIN", "Password:"+password);
         if (username.equals("") || password.equals("") || username == null || password == null) {
             return false;
         }
         try {
             Connection con = this.dbService.getConnection();
-            String query = "select PasswordSalt, PasswordHash from User where Username = ?";
+            Log.d("LOGIN", "CONNECTION is null?" + (con == null));
+            String query = "select PasswordSalt, PasswordHash from [User] where Username = ?";
             PreparedStatement stmt = con.prepareStatement(query);
+            Log.d("LOGIN", "Query set");
             stmt.setString(1, username);
+            Log.d("LOGIN", stmt.toString());
             ResultSet rs = stmt.executeQuery();
-            byte[] pwSalt = rs.getBytes("PasswordSalt");
+            Log.d("LOGIN", "Query executed, result is null?" + (rs == null));
+            byte[] pwSalt = null;
+            rs.next();
+            try {
+                pwSalt = rs.getBytes("PasswordSalt");
+            }catch (Exception e){
+                Log.d("LOGIN",e.toString());
+                Log.d("LOGIN", "FAIL TO GET salt");
+            }
             String pwHash = rs.getString("PasswordHash");
+            Log.d("LOGIN", pwHash);
             if (pwHash.equals(hashPassword(pwSalt, password))) {
                 return true;
             } else {
-                //TODO: Display Error Message
+                Log.d("LOGIN", "WRONG PW");
             }
         } catch (Exception e) {
-            //TODO: Display Error Message
         }
         return false;
     }
@@ -65,7 +80,7 @@ public class UserService {
             //TODO: Change stored procedure
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, username);
-            cs.setString(3, getStringFromBytes(salt));
+            cs.setBytes(3, salt);
             cs.setString(4, pwHash);
             //TODO: Update set
             cs.executeUpdate();

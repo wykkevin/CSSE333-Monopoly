@@ -42,7 +42,7 @@ public class WelcomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = getView();
+        View view = inflater.inflate(R.layout.fragment_welcome, container, false);
         Button mEnterLobbyButton = (Button) view.findViewById(R.id.enter_lobby_button);
         mEnterLobbyButton.setOnClickListener(new View.OnClickListener() {
             @Override

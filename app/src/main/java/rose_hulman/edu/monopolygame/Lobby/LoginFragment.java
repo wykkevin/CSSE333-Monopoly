@@ -1,8 +1,10 @@
 package rose_hulman.edu.monopolygame.Lobby;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,22 +48,6 @@ public class LoginFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    private void attemptLogin(String user, String pw) {
-        if (userService.login(user, pw)) {
-            loginSucceeded();
-        }else {
-            mListener.showErrorMessage(false);
-        }
-    }
-
-    private void attemptRegister(String user, String pw) {
-        if (userService.register(user, pw)) {
-            loginSucceeded();
-        }else {
-            mListener.showErrorMessage(true);
-        }
-    }
-
     public void loginSucceeded() {
         mListener.switchToWelcomePage();
     }
@@ -76,27 +62,92 @@ public class LoginFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
         mUserView = (EditText) view.findViewById(R.id.username);
         dbService = DatabaseConnectionService.getInstance(Informations.serverName, Informations.databaseName);
-        dbService.connect(Informations.serverUsername, Informations.serverPassword);//TODO: Handle Cases of failure to connect to DB
+        (new GetConnectionClass()).execute((String[]) null);
         mPasswordView = (EditText) view.findViewById(R.id.password);
-        userService = new UserService(dbService);
         Button mUserSignInButton = (Button) view.findViewById(R.id.user_sign_in_button);
         mUserSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin(mUserView.getText().toString(), mPasswordView.getText().toString());
+                if (dbService.getConnection() == null) {
+                    Log.d("DBCONNECT", "Connection status: " + (dbService.getConnection() == null));
+                    mListener.showErrorMessage(false);
+                }
+                String[] input = new String[2];
+                input[0] = mUserView.getText().toString();
+                input[1] = mPasswordView.getText().toString();
+                (new LoginClass()).execute(input);
             }
         });
         Button mUserRegButton = (Button) view.findViewById(R.id.user_reg_button);
         mUserRegButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!isPasswordValid(mPasswordView.getText().toString())) {
+                if (!isPasswordValid(mPasswordView.getText().toString()) || dbService.getConnection() == null) {
+                    Log.d("DBCONNECT", "Connection status: " + (dbService.getConnection() == null));
                     mListener.showErrorMessage(true);
                 }
-                attemptRegister(mUserView.getText().toString(), mPasswordView.getText().toString());
+                String[] input = new String[2];
+                input[0] = mUserView.getText().toString();
+                input[1] = mPasswordView.getText().toString();
+                (new SignUpClass()).execute(input);
             }
         });
         return view;
+    }
+
+
+    class GetConnectionClass extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... input) {
+            dbService.connect(Informations.serverUsername, Informations.serverPassword);
+            if (dbService.getConnection() != null) {
+                userService = new UserService(dbService);
+                Log.d("DBCONNECT", "CONNECTED!");
+            }
+            return null;
+        }
+    }
+
+
+    class LoginClass extends AsyncTask<String, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(String... urlStrings) {
+            if (userService.login(urlStrings[0], urlStrings[1])) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                loginSucceeded();
+            } else {
+                mListener.showErrorMessage(false);
+            }
+        }
+    }
+
+
+    class SignUpClass extends AsyncTask<String, Void, Boolean> {
+        private String url;
+
+        @Override
+        protected Boolean doInBackground(String... urlStrings) {
+            if (userService.register(urlStrings[0], urlStrings[1])) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                loginSucceeded();
+            } else {
+                mListener.showErrorMessage(true);
+            }
+        }
     }
 
 

@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
 
 
 
+
     @Override
     public void onGameInfoFragmentInteraction(GameInfoContent.GameInfo item) {
         //TODO: Switch to game room
@@ -45,10 +46,14 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
         //Todo: Show Scoreboard
     }
 
+
+
+
     @Override
     public void signOut() {
         DatabaseConnectionService dbService = DatabaseConnectionService.getInstance("", "");
         dbService.closeConnection();
+        
     }
 
     @Override
