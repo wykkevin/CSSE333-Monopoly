@@ -1,6 +1,5 @@
 package rose_hulman.edu.monopolygame.Game;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -28,7 +27,6 @@ public class GameViewFragment extends Fragment {
 
     private GameMapFragmentListener mListener;
 
-    private onExitListener mOnExitListener;
     private Button rolldiceButton;
     private Button confirmButton;
     private Button rejectButton;
@@ -90,24 +88,13 @@ public class GameViewFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof onExitListener) {
-            mOnExitListener = (onExitListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement GameRoomFragmentListener");
-        }
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
     public void exitGame() {
-        mOnExitListener.leaveGame();
+        mListener.leaveGame();
     }
 
     public void setRollDiceButtonStatus(boolean isActivate) {
@@ -120,10 +107,6 @@ public class GameViewFragment extends Fragment {
 
     public void setRejectButtonStatus(boolean isActivate) {
         this.rejectButton.setActivated(isActivate);
-    }
-
-    public interface onExitListener {
-        void leaveGame();
     }
 
     /**
@@ -142,5 +125,7 @@ public class GameViewFragment extends Fragment {
         void confirm();
 
         void reject();
+
+        void leaveGame();
     }
 }

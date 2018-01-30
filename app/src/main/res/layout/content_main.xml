@@ -5,7 +5,7 @@
     android:id="@+id/fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="rose_hulman.edu.monopolygame.MainActivity"
+    tools:context="rose_hulman.edu.monopolygame.Basics.MainActivity"
     tools:showIn="@layout/activity_main">
 
 

@@ -1,4 +1,4 @@
-package rose_hulman.edu.monopolygame.DatabaseConnection;
+package rose_hulman.edu.monopolygame.Basics;
 
 /**
  * Created by Hao Yang on 1/23/2018.

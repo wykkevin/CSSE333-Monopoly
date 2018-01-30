@@ -1,4 +1,4 @@
-package rose_hulman.edu.monopolygame.Lobby;
+package rose_hulman.edu.monopolygame.GameRoom;
 
 import android.os.AsyncTask;
 import android.util.Log;

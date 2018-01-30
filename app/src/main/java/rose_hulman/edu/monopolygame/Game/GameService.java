@@ -68,7 +68,6 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
         @Override
         protected void onPostExecute(Void aVoid) {
             if (pressedExit) {
-                mGameViewFragment.exitGame();
                 return;
             }
             if (update) {
@@ -136,4 +135,10 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
     public void reject() {
         this.decision = 2;
     }
+
+    @Override
+    public void leaveGame() {
+        this.pressedExit = true;
+    }
+
 }

@@ -1,4 +1,4 @@
-package rose_hulman.edu.monopolygame.Lobby;
+package rose_hulman.edu.monopolygame.GameRoom;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,21 +8,19 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import rose_hulman.edu.monopolygame.Lobby.PlayerInfoContent.PlayerInfo;
-import rose_hulman.edu.monopolygame.Lobby.PlayerInfoFragment.OnPlayerInfoFragmentListener;
 import rose_hulman.edu.monopolygame.R;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link PlayerInfo} and makes a call to the
- * specified {@link OnPlayerInfoFragmentListener}.
+ * {@link RecyclerView.Adapter} that can display a {@link PlayerInfoContent.PlayerInfo} and makes a call to the
+ * specified {@link PlayerInfoFragment.OnPlayerInfoFragmentListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MyPlayerInfoRecyclerViewAdapter extends RecyclerView.Adapter<MyPlayerInfoRecyclerViewAdapter.ViewHolder> {
 
-    private final List<PlayerInfo> mValues;
-    private final OnPlayerInfoFragmentListener mListener;
+    private final List<PlayerInfoContent.PlayerInfo> mValues;
+    private final PlayerInfoFragment.OnPlayerInfoFragmentListener mListener;
 
-    public MyPlayerInfoRecyclerViewAdapter(List<PlayerInfo> items, OnPlayerInfoFragmentListener listener) {
+    public MyPlayerInfoRecyclerViewAdapter(List<PlayerInfoContent.PlayerInfo> items, PlayerInfoFragment.OnPlayerInfoFragmentListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -48,7 +46,7 @@ public class MyPlayerInfoRecyclerViewAdapter extends RecyclerView.Adapter<MyPlay
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
-        public PlayerInfo mItem;
+        public PlayerInfoContent.PlayerInfo mItem;
 
         public ViewHolder(View view) {
             super(view);

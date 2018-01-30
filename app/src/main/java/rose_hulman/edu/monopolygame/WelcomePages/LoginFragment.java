@@ -1,4 +1,4 @@
-package rose_hulman.edu.monopolygame.Lobby;
+package rose_hulman.edu.monopolygame.WelcomePages;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import rose_hulman.edu.monopolygame.DatabaseConnection.DatabaseConnectionService;
-import rose_hulman.edu.monopolygame.DatabaseConnection.Informations;
+import rose_hulman.edu.monopolygame.Basics.Informations;
 import rose_hulman.edu.monopolygame.DatabaseConnection.UserService;
 import rose_hulman.edu.monopolygame.R;
 

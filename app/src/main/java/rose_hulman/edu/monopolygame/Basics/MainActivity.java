@@ -1,4 +1,4 @@
-package rose_hulman.edu.monopolygame;
+package rose_hulman.edu.monopolygame.Basics;
 
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -21,9 +21,10 @@ import rose_hulman.edu.monopolygame.DatabaseConnection.DatabaseConnectionService
 import rose_hulman.edu.monopolygame.Game.GameViewFragment;
 import rose_hulman.edu.monopolygame.Lobby.GameInfoContent;
 import rose_hulman.edu.monopolygame.Lobby.GameInfoFragment;
-import rose_hulman.edu.monopolygame.Lobby.LoginFragment;
-import rose_hulman.edu.monopolygame.Lobby.PlayerInfoFragment;
-import rose_hulman.edu.monopolygame.Lobby.WelcomeFragment;
+import rose_hulman.edu.monopolygame.R;
+import rose_hulman.edu.monopolygame.WelcomePages.LoginFragment;
+import rose_hulman.edu.monopolygame.GameRoom.PlayerInfoFragment;
+import rose_hulman.edu.monopolygame.WelcomePages.WelcomeFragment;
 
 public class MainActivity extends AppCompatActivity implements GameInfoFragment.GameInfoFragmentListener, WelcomeFragment.WelcomeFragmentListener, LoginFragment.LoginFragmentListener, PlayerInfoFragment.OnPlayerInfoFragmentListener {
 
@@ -43,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         if (mFragmentStack.peek() instanceof PlayerInfoFragment || mFragmentStack.peek() instanceof GameViewFragment) {
             (new QuitGameClass()).execute();
         } else {
@@ -101,6 +101,10 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
         (new StartGameClass()).execute(infoList);
     }
 
+    public void enterGame() {
+        //TODO: Create Logic of entering game
+    }
+
     class StartGameClass extends AsyncTask<GameInfoContent.GameInfo, Void, Boolean> {
         @Override
         protected Boolean doInBackground(GameInfoContent.GameInfo... gameInfos) {
@@ -116,6 +120,11 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
                 e.printStackTrace();
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            enterGame();
         }
     }
 
@@ -141,10 +150,17 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            mFragmentStack.pop();
+            replacefragment(mFragmentStack.peek());
+        }
     }
 
     public void createGame(GameInfoContent.GameInfo gameInfo) {
         GameViewFragment.newInstance(gameInfo);
+        mFragmentStack.pop();
         //TODO: Create map based on GameInfo
         //TODO: Create game in SQL
     }
@@ -266,7 +282,10 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
     @Override
     public void onBackPressed() {
         if (mFragmentStack.size() > 1) {
-            if (mFragmentStack.peek() instanceof PlayerInfoFragment || mFragmentStack.peek() instanceof GameViewFragment) {
+            if (mFragmentStack.peek() instanceof PlayerInfoFragment) {
+                (new LeaveGameClass()).execute();
+            } else if (mFragmentStack.peek() instanceof GameViewFragment) {
+                ((GameViewFragment) mFragmentStack.peek()).exitGame();
                 (new LeaveGameClass()).execute();
             } else {
                 mFragmentStack.pop();

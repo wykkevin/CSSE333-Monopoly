@@ -1,4 +1,4 @@
-package rose_hulman.edu.monopolygame.Lobby;
+package rose_hulman.edu.monopolygame.GameRoom;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import rose_hulman.edu.monopolygame.Lobby.GameInfoContent;
 import rose_hulman.edu.monopolygame.R;
 
 /**

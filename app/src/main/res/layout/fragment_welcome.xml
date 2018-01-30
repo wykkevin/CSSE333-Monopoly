@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="rose_hulman.edu.monopolygame.Lobby.WelcomeFragment">
+    tools:context="rose_hulman.edu.monopolygame.WelcomePages.WelcomeFragment">
 
     <Button
         android:layout_gravity="center_horizontal"

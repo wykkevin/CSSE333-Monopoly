@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list"
-    android:name="rose_hulman.edu.monopolygame.Lobby.PlayerInfoFragment"
+    android:name="rose_hulman.edu.monopolygame.GameRoom.PlayerInfoFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
-    tools:context="rose_hulman.edu.monopolygame.Lobby.PlayerInfoFragment"
+    tools:context="rose_hulman.edu.monopolygame.GameRoom.PlayerInfoFragment"
     tools:listitem="@layout/fragment_playerinfo" />

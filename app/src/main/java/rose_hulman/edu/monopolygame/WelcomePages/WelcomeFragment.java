@@ -1,4 +1,4 @@
-package rose_hulman.edu.monopolygame.Lobby;
+package rose_hulman.edu.monopolygame.WelcomePages;
 
 import android.support.v4.app.Fragment;
 import android.content.Context;
