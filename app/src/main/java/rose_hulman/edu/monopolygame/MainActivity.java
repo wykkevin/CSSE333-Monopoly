@@ -18,10 +18,9 @@ import java.sql.Types;
 import java.util.Stack;
 
 import rose_hulman.edu.monopolygame.DatabaseConnection.DatabaseConnectionService;
-import rose_hulman.edu.monopolygame.Game.GameMapFragment;
+import rose_hulman.edu.monopolygame.Game.GameViewFragment;
 import rose_hulman.edu.monopolygame.Lobby.GameInfoContent;
 import rose_hulman.edu.monopolygame.Lobby.GameInfoFragment;
-import rose_hulman.edu.monopolygame.Lobby.GameMainFragment;
 import rose_hulman.edu.monopolygame.Lobby.LoginFragment;
 import rose_hulman.edu.monopolygame.Lobby.PlayerInfoFragment;
 import rose_hulman.edu.monopolygame.Lobby.WelcomeFragment;
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
     protected void onDestroy() {
         super.onDestroy();
 
-        if (mFragmentStack.peek() instanceof PlayerInfoFragment || mFragmentStack.peek() instanceof GameMainFragment) {
+        if (mFragmentStack.peek() instanceof PlayerInfoFragment || mFragmentStack.peek() instanceof GameViewFragment) {
             (new QuitGameClass()).execute();
         } else {
             DatabaseConnectionService dbService = DatabaseConnectionService.getInstance("", "");
@@ -145,8 +144,9 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
     }
 
     public void createGame(GameInfoContent.GameInfo gameInfo) {
-        GameMapFragment.newInstance(gameInfo);
+        GameViewFragment.newInstance(gameInfo);
         //TODO: Create map based on GameInfo
+        //TODO: Create game in SQL
     }
 
 
@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
     @Override
     public void onBackPressed() {
         if (mFragmentStack.size() > 1) {
-            if (mFragmentStack.peek() instanceof PlayerInfoFragment || mFragmentStack.peek() instanceof GameMainFragment) {
+            if (mFragmentStack.peek() instanceof PlayerInfoFragment || mFragmentStack.peek() instanceof GameViewFragment) {
                 (new LeaveGameClass()).execute();
             } else {
                 mFragmentStack.pop();
