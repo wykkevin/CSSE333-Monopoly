@@ -48,8 +48,8 @@ public class LoginFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    public void loginSucceeded() {
-        mListener.switchToWelcomePage();
+    public void loginSucceeded(String userID) {
+        mListener.switchToWelcomePage(userID);
     }
 
     private boolean isPasswordValid(String password) {
@@ -70,7 +70,7 @@ public class LoginFragment extends Fragment {
             public void onClick(View view) {
                 if (dbService.getConnection() == null) {
                     Log.d("DBCONNECT", "Connection status: " + (dbService.getConnection() == null));
-                    mListener.showErrorMessage(false);
+                    mListener.showErrorMessage("Login Failed!");
                 }
                 String[] input = new String[2];
                 input[0] = mUserView.getText().toString();
@@ -84,7 +84,7 @@ public class LoginFragment extends Fragment {
             public void onClick(View view) {
                 if (!isPasswordValid(mPasswordView.getText().toString()) || dbService.getConnection() == null) {
                     Log.d("DBCONNECT", "Connection status: " + (dbService.getConnection() == null));
-                    mListener.showErrorMessage(true);
+                    mListener.showErrorMessage("Registration Failed!");
                 }
                 String[] input = new String[2];
                 input[0] = mUserView.getText().toString();
@@ -110,8 +110,11 @@ public class LoginFragment extends Fragment {
 
 
     class LoginClass extends AsyncTask<String, Void, Boolean> {
+        private String userID;
+
         @Override
         protected Boolean doInBackground(String... urlStrings) {
+            userID = urlStrings[0];
             if (userService.login(urlStrings[0], urlStrings[1])) {
                 return true;
             } else {
@@ -121,19 +124,20 @@ public class LoginFragment extends Fragment {
 
         protected void onPostExecute(Boolean result) {
             if (result) {
-                loginSucceeded();
+                loginSucceeded(userID);
             } else {
-                mListener.showErrorMessage(false);
+                mListener.showErrorMessage("Login Failed!");
             }
         }
     }
 
 
     class SignUpClass extends AsyncTask<String, Void, Boolean> {
-        private String url;
+        private String userID;
 
         @Override
         protected Boolean doInBackground(String... urlStrings) {
+            userID = urlStrings[0];
             if (userService.register(urlStrings[0], urlStrings[1])) {
                 return true;
             } else {
@@ -143,9 +147,9 @@ public class LoginFragment extends Fragment {
 
         protected void onPostExecute(Boolean result) {
             if (result) {
-                loginSucceeded();
+                loginSucceeded(userID);
             } else {
-                mListener.showErrorMessage(true);
+                mListener.showErrorMessage("Registration Failed!");
             }
         }
     }
@@ -179,9 +183,9 @@ public class LoginFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface LoginFragmentListener {
-        void switchToWelcomePage();
+        void switchToWelcomePage(String userID);
 
-        void showErrorMessage(boolean isRegister);
+        void showErrorMessage(String isRegister);
     }
 
 }

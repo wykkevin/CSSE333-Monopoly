@@ -37,8 +37,8 @@ public class MyGameInfoRecyclerViewAdapter extends RecyclerView.Adapter<MyGameIn
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mIdView.setText("Game Name: " + holder.mItem.gameName);
+        holder.mMapIndexView.setText("Map: " + holder.mItem.mapIndex);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +46,7 @@ public class MyGameInfoRecyclerViewAdapter extends RecyclerView.Adapter<MyGameIn
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onGameInfoFragmentInteraction(holder.mItem);
+                    mListener.enterRoom(holder.mItem);
                 }
             }
         });
@@ -60,19 +60,16 @@ public class MyGameInfoRecyclerViewAdapter extends RecyclerView.Adapter<MyGameIn
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
-        public final TextView mContentView;
+        public final TextView mMapIndexView;
+
         public GameInfo mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            mIdView = (TextView) view.findViewById(R.id.gameid);
+            mMapIndexView = (TextView) view.findViewById(R.id.mapinfo);
         }
     }
 }
+

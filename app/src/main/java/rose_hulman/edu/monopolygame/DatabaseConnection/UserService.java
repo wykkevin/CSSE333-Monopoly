@@ -32,35 +32,23 @@ public class UserService {
     }
 
     public boolean login(String username, String password) {
-        Log.d("LOGIN", "Username:"+username);
-        Log.d("LOGIN", "Password:"+password);
+        Log.d("LOGIN", "Username:" + username);
+        Log.d("LOGIN", "Password:" + password);
         if (username.equals("") || password.equals("") || username == null || password == null) {
             return false;
         }
         try {
             Connection con = this.dbService.getConnection();
-            Log.d("LOGIN", "CONNECTION is null?" + (con == null));
             String query = "select PasswordSalt, PasswordHash from [User] where Username = ?";
             PreparedStatement stmt = con.prepareStatement(query);
-            Log.d("LOGIN", "Query set");
             stmt.setString(1, username);
-            Log.d("LOGIN", stmt.toString());
             ResultSet rs = stmt.executeQuery();
-            Log.d("LOGIN", "Query executed, result is null?" + (rs == null));
-            byte[] pwSalt = null;
             rs.next();
-            try {
-                pwSalt = rs.getBytes("PasswordSalt");
-            }catch (Exception e){
-                Log.d("LOGIN",e.toString());
-                Log.d("LOGIN", "FAIL TO GET salt");
-            }
+            byte[] pwSalt = rs.getBytes("PasswordSalt");
             String pwHash = rs.getString("PasswordHash");
-            Log.d("LOGIN", pwHash);
             if (pwHash.equals(hashPassword(pwSalt, password))) {
                 return true;
             } else {
-                Log.d("LOGIN", "WRONG PW");
             }
         } catch (Exception e) {
         }
@@ -77,22 +65,18 @@ public class UserService {
             Connection con = this.dbService.getConnection();
             CallableStatement cs;
             cs = con.prepareCall("{?=call Register(?,?,?)}");
-            //TODO: Change stored procedure
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, username);
             cs.setBytes(3, salt);
             cs.setString(4, pwHash);
-            //TODO: Update set
             cs.executeUpdate();
             int returnValue = cs.getInt(1);
             System.out.println(returnValue);
             if (returnValue > 0) {
-                //TODO: Display Error Message
                 return false;
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            //TODO: Display Error Message
             return false;
         }
         return true;

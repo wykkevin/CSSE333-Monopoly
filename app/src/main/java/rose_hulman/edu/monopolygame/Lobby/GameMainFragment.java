@@ -13,12 +13,12 @@ import rose_hulman.edu.monopolygame.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link GameRoomFragmentListener} interface
+ * {@link GameMainFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link GameRoomFragment#newInstance} factory method to
+ * Use the {@link GameMainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GameRoomFragment extends Fragment {
+public class GameMainFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -28,9 +28,9 @@ public class GameRoomFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private GameRoomFragmentListener mListener;
+    private OnFragmentInteractionListener mListener;
 
-    public GameRoomFragment() {
+    public GameMainFragment() {
         // Required empty public constructor
     }
 
@@ -40,11 +40,11 @@ public class GameRoomFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment GameRoomFragment.
+     * @return A new instance of fragment GameMainFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static GameRoomFragment newInstance(String param1, String param2) {
-        GameRoomFragment fragment = new GameRoomFragment();
+    public static GameMainFragment newInstance(String param1, String param2) {
+        GameMainFragment fragment = new GameMainFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -65,24 +65,24 @@ public class GameRoomFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_game_room, container, false);
+        return inflater.inflate(R.layout.fragment_game_main, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onGameRoomFragmentInteraction(uri);
+            mListener.onFragmentInteraction(uri);
         }
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof GameRoomFragmentListener) {
-            mListener = (GameRoomFragmentListener) context;
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement GameRoomFragmentListener");
+                    + " must implement GameMapFragmentListener");
         }
     }
 
@@ -102,8 +102,8 @@ public class GameRoomFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface GameRoomFragmentListener {
+    public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onGameRoomFragmentInteraction(Uri uri);
+        void onFragmentInteraction(Uri uri);
     }
 }

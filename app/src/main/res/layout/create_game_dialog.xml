@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/dialog_mapIndex"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:hint="Input Map Index"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/dialog_starting_money"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:hint="Input Initial Money"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/dialog_maxturns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:hint="Input Max Turns"
+        android:inputType="number" />
+
+    <!--<EditText-->
+    <!--android:id="@+id/dialog_numberOfPlayers"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="@dimen/activity_horizontal_margin"-->
+    <!--android:hint="Input Number of Players"-->
+    <!--android:inputType="number" />-->
+
+    <EditText
+        android:id="@+id/dialog_TargetAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:hint="Input Target Amount"
+        android:inputType="number" />
+
+
+    <EditText
+        android:id="@+id/dialog_GameName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:hint="Input Game Name"
+        android:inputType="text" />
+</LinearLayout>
