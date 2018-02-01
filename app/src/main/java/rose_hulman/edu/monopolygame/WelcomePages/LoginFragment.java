@@ -71,6 +71,7 @@ public class LoginFragment extends Fragment {
                 if (dbService.getConnection() == null) {
                     Log.d("DBCONNECT", "Connection status: " + (dbService.getConnection() == null));
                     mListener.showErrorMessage("Login Failed!");
+                    return;
                 }
                 String[] input = new String[2];
                 input[0] = mUserView.getText().toString();
@@ -85,6 +86,7 @@ public class LoginFragment extends Fragment {
                 if (!isPasswordValid(mPasswordView.getText().toString()) || dbService.getConnection() == null) {
                     Log.d("DBCONNECT", "Connection status: " + (dbService.getConnection() == null));
                     mListener.showErrorMessage("Registration Failed!");
+                    return;
                 }
                 String[] input = new String[2];
                 input[0] = mUserView.getText().toString();

@@ -63,7 +63,7 @@ public class GameInfoContent {
                     int MaxTurns = rs.getInt(4);
                     int TargetAmount = rs.getInt(5);
                     String gameName = rs.getString(6);
-                    GameInfo info = new GameInfo(gameid, mapIndex, initMoney, MaxTurns, TargetAmount, gameName);
+                    GameInfo info = new GameInfo(gameid, mapIndex, initMoney, MaxTurns, TargetAmount, gameName, "");
                     addItem(info);
                 }
             } catch (SQLException e) {
@@ -96,14 +96,16 @@ public class GameInfoContent {
         public final int MaxTurns;
         public final int TargetAmount;
         public final String gameName;
+        public final String characterName;
 
-        public GameInfo(int gameid, int mapIndex, int initMoney, int maxTurns, int targetAmount, String gameName) {
+        public GameInfo(int gameid, int mapIndex, int initMoney, int maxTurns, int targetAmount, String gameName, String characterName) {
             this.gameid = gameid;
             this.mapIndex = mapIndex;
             this.initMoney = initMoney;
             MaxTurns = maxTurns;
             TargetAmount = targetAmount;
             this.gameName = gameName;
+            this.characterName = characterName;
         }
 
         protected GameInfo(Parcel in) {
@@ -113,6 +115,7 @@ public class GameInfoContent {
             MaxTurns = in.readInt();
             TargetAmount = in.readInt();
             gameName = in.readString();
+            characterName = in.readString();
         }
 
         public static final Creator<GameInfo> CREATOR = new Creator<GameInfo>() {
@@ -140,6 +143,7 @@ public class GameInfoContent {
             dest.writeInt(MaxTurns);
             dest.writeInt(TargetAmount);
             dest.writeString(gameName);
+            dest.writeString(characterName);
         }
     }
 }

@@ -72,6 +72,7 @@ public class PlayerInfoFragment extends Fragment {
             recyclerView.setAdapter(mAdapter);
             PlayerInfoContent.reloadPlayer();
         }
+        new StartGameService(this);
         return view;
     }
 
@@ -114,6 +115,10 @@ public class PlayerInfoFragment extends Fragment {
         mListener = null;
     }
 
+    public void enterGame() {
+        mListener.enterGame(mGameInfo);
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -126,5 +131,7 @@ public class PlayerInfoFragment extends Fragment {
      */
     public interface OnPlayerInfoFragmentListener {
         void StartGame(GameInfoContent.GameInfo item);
+
+        void enterGame(GameInfoContent.GameInfo item);
     }
 }

@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -29,7 +30,12 @@ import rose_hulman.edu.monopolygame.WelcomePages.WelcomeFragment;
 public class MainActivity extends AppCompatActivity implements GameInfoFragment.GameInfoFragmentListener, WelcomeFragment.WelcomeFragmentListener, LoginFragment.LoginFragmentListener, PlayerInfoFragment.OnPlayerInfoFragmentListener {
 
     private Stack<Fragment> mFragmentStack;
-    private String UserName;
+    private static String UserName;
+
+    public static String getUserName() {
+        return UserName;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,21 +107,25 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
         (new StartGameClass()).execute(infoList);
     }
 
-    public void enterGame() {
-        //TODO: Create Logic of entering game
+    @Override
+    public void enterGame(GameInfoContent.GameInfo gameInfo) {
+        GameViewFragment mFrag = GameViewFragment.newInstance(gameInfo);
+        mFragmentStack.pop();
+        replacefragment(mFrag);
     }
 
     class StartGameClass extends AsyncTask<GameInfoContent.GameInfo, Void, Boolean> {
+        private GameInfoContent.GameInfo gameInfo;
+
         @Override
         protected Boolean doInBackground(GameInfoContent.GameInfo... gameInfos) {
             try {
-                GameInfoContent.GameInfo info = gameInfos[0];
+                gameInfo = gameInfos[0];
                 Connection con = DatabaseConnectionService.getInstance("", "").getConnection();
                 CallableStatement cs;
                 cs = con.prepareCall("{call Start_Game(?)}");
-                cs.setInt(1, info.gameid);
+                cs.setInt(1, gameInfo.gameid);
                 cs.executeUpdate();
-                createGame(info);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -124,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {
-            enterGame();
+            enterGame(gameInfo);
         }
     }
 
@@ -156,13 +166,6 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
             mFragmentStack.pop();
             replacefragment(mFragmentStack.peek());
         }
-    }
-
-    public void createGame(GameInfoContent.GameInfo gameInfo) {
-        GameViewFragment.newInstance(gameInfo);
-        mFragmentStack.pop();
-        //TODO: Create map based on GameInfo
-        //TODO: Create game in SQL
     }
 
 
@@ -201,8 +204,10 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
                 rs = stmt.executeQuery();
                 rs.next();
                 gameid = rs.getInt(1);
-                GameInfoContent.GameInfo gameInfo = new GameInfoContent.GameInfo(gameid, Integer.valueOf(input[0]), Integer.valueOf(input[2]), Integer.valueOf(input[3]), Integer.valueOf(input[4]), input[5]);
+                //TODO: FIX THIS CHARACTER NAME;
+                GameInfoContent.GameInfo gameInfo = new GameInfoContent.GameInfo(gameid, Integer.valueOf(input[0]), Integer.valueOf(input[2]), Integer.valueOf(input[3]), Integer.valueOf(input[4]), input[5], "");
                 enterGameRoom(gameInfo);
+                Log.d("ADDGAME", "Entered Game Room");
             } catch (Exception e) {
                 e.printStackTrace();
             }
