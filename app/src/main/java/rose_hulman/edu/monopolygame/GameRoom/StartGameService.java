@@ -31,7 +31,7 @@ public class StartGameService {
             String query = "Select Status from [User] Where UserName = ? ";
             try {
                 PreparedStatement stmt = con.prepareStatement(query);
-                stmt.setString(1,userName);
+                stmt.setString(1, userName);
                 ResultSet rs = stmt.executeQuery();
                 rs.next();
                 return rs.getInt("Status");
@@ -43,7 +43,7 @@ public class StartGameService {
 
         @Override
         protected void onPostExecute(Integer integer) {
-            switch (integer){
+            switch (integer) {
                 case 0:
                     (new GameStarterClass()).execute();
                     break;

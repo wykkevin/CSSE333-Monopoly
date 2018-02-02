@@ -53,7 +53,7 @@ public class LoginFragment extends Fragment {
     }
 
     private boolean isPasswordValid(String password) {
-        return password.length() > 6;
+        return password.length() >= 6;
     }
 
     @Override

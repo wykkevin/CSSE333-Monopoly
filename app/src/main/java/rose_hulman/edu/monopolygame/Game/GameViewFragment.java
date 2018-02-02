@@ -36,6 +36,10 @@ public class GameViewFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public int getGameID(){
+        return mGameInfo.gameid;
+    }
+
     public static GameViewFragment newInstance(GameInfoContent.GameInfo gameInfo) {
         GameViewFragment fragment = new GameViewFragment();
         Bundle args = new Bundle();

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Iterator;
 import java.util.List;
 
 import rose_hulman.edu.monopolygame.R;
@@ -17,7 +18,7 @@ import rose_hulman.edu.monopolygame.R;
  */
 public class MyPlayerInfoRecyclerViewAdapter extends RecyclerView.Adapter<MyPlayerInfoRecyclerViewAdapter.ViewHolder> {
 
-    private final List<PlayerInfoContent.PlayerInfo> mValues;
+    private static List<PlayerInfoContent.PlayerInfo> mValues;
     private final PlayerInfoFragment.OnPlayerInfoFragmentListener mListener;
 
     public MyPlayerInfoRecyclerViewAdapter(List<PlayerInfoContent.PlayerInfo> items, PlayerInfoFragment.OnPlayerInfoFragmentListener listener) {
@@ -41,6 +42,10 @@ public class MyPlayerInfoRecyclerViewAdapter extends RecyclerView.Adapter<MyPlay
     @Override
     public int getItemCount() {
         return mValues.size();
+    }
+
+    public static Iterator<PlayerInfoContent.PlayerInfo> getIterator() {
+        return mValues.iterator();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

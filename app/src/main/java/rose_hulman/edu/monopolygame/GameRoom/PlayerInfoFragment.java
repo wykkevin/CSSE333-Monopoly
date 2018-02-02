@@ -12,6 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Iterator;
+
 import rose_hulman.edu.monopolygame.Lobby.GameInfoContent;
 import rose_hulman.edu.monopolygame.R;
 
@@ -28,6 +30,10 @@ public class PlayerInfoFragment extends Fragment {
     private OnPlayerInfoFragmentListener mListener;
     private GameInfoContent.GameInfo mGameInfo;
     private MyPlayerInfoRecyclerViewAdapter mAdapter;
+
+    public static Iterator<PlayerInfoContent.PlayerInfo> getIterator() {
+        return MyPlayerInfoRecyclerViewAdapter.getIterator();
+    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the

@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -15,16 +14,19 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Iterator;
 import java.util.Stack;
 
 import rose_hulman.edu.monopolygame.DatabaseConnection.DatabaseConnectionService;
 import rose_hulman.edu.monopolygame.Game.GameViewFragment;
+import rose_hulman.edu.monopolygame.GameRoom.PlayerInfoContent;
+import rose_hulman.edu.monopolygame.GameRoom.PlayerInfoFragment;
 import rose_hulman.edu.monopolygame.Lobby.GameInfoContent;
 import rose_hulman.edu.monopolygame.Lobby.GameInfoFragment;
 import rose_hulman.edu.monopolygame.R;
 import rose_hulman.edu.monopolygame.WelcomePages.LoginFragment;
-import rose_hulman.edu.monopolygame.GameRoom.PlayerInfoFragment;
 import rose_hulman.edu.monopolygame.WelcomePages.WelcomeFragment;
 
 public class MainActivity extends AppCompatActivity implements GameInfoFragment.GameInfoFragmentListener, WelcomeFragment.WelcomeFragmentListener, LoginFragment.LoginFragmentListener, PlayerInfoFragment.OnPlayerInfoFragmentListener {
@@ -58,12 +60,32 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
         }
     }
 
+    public void selectCharacter(final Object[] input, final Boolean isCreate) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Create Game");
+        View view = getLayoutInflater().inflate(R.layout.select_character_dialog, null, false);
+        builder.setView(view);
+        final EditText CharacterName = (EditText) view.findViewById(R.id.dialog_characterName);
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (isCreate) {
+                    input[5] = CharacterName.getText().toString();
+                    (new AddGameClass()).execute((String[]) input);
+                } else {
+                    input[1] = CharacterName.getText().toString();
+                    (new JoinGameClass()).execute(input);
+                }
+            }
+        }).show();
+    }
+
 
     @Override
     public void enterRoom(GameInfoContent.GameInfo item) {
-        GameInfoContent.GameInfo[] infoList = new GameInfoContent.GameInfo[1];
+        Object[] infoList = new Object[2];
         infoList[0] = item;
-        (new JoinGameClass()).execute(infoList);
+        selectCharacter(infoList, false);
     }
 
     public void enterGameRoom(GameInfoContent.GameInfo item) {
@@ -87,14 +109,14 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
         builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String[] input = new String[6];
+                String[] input = new String[7];
                 input[0] = MapIndex.getText().toString();
                 input[1] = UserName;
                 input[2] = InitMoney.getText().toString();
                 input[3] = maxTurns.getText().toString();
                 input[4] = TargetAmount.getText().toString();
-                input[5] = GameName.getText().toString();
-                (new AddGameClass()).execute(input);
+                input[6] = GameName.getText().toString();
+                selectCharacter(input, true);
             }
         }).show();
     }
@@ -111,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
     public void enterGame(GameInfoContent.GameInfo gameInfo) {
         GameViewFragment mFrag = GameViewFragment.newInstance(gameInfo);
         mFragmentStack.pop();
+        mFragmentStack.push(mFrag);
         replacefragment(mFrag);
     }
 
@@ -134,7 +157,30 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {
-            enterGame(gameInfo);
+            (new OrderSetterClass()).execute();
+        }
+    }
+
+
+    class OrderSetterClass extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... commands) {
+            Iterator<PlayerInfoContent.PlayerInfo> playerInfoIterator = PlayerInfoFragment.getIterator();
+            Connection con = DatabaseConnectionService.getInstance("", "").getConnection();
+            String query = "Update Character SET [Order] = ? Where UserID = ? ";
+            try {
+                int count = 0;
+                while (playerInfoIterator.hasNext()) {
+                    PreparedStatement stmt = con.prepareStatement(query);
+                    stmt.setInt(1, count);
+                    stmt.setInt(2, playerInfoIterator.next().id);
+                    stmt.executeUpdate();
+                    count++;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
     }
 
@@ -153,8 +199,6 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
                 int userID = rs.getInt(1);
                 cs.setInt(1, userID);
                 cs.executeUpdate();
-                mFragmentStack.pop();
-                replacefragment(mFragmentStack.peek());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -170,6 +214,8 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
 
 
     class AddGameClass extends AsyncTask<String, Void, Boolean> {
+        GameInfoContent.GameInfo info;
+
         @Override
         protected Boolean doInBackground(String... input) {
             try {
@@ -188,8 +234,8 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
                 cs.setDouble(4, Double.valueOf(input[2]));
                 cs.setInt(5, Integer.valueOf(input[3]));
                 cs.setInt(6, Integer.valueOf(input[4]));
-                cs.setString(7, "23");//TODO: Deal with this later
-                cs.setString(8, input[5]);
+                cs.setString(7, input[5]);
+                cs.setString(8, input[6]);
                 cs.executeUpdate();
                 int returnValue = cs.getInt(1);
                 System.out.println(returnValue);
@@ -204,14 +250,16 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
                 rs = stmt.executeQuery();
                 rs.next();
                 gameid = rs.getInt(1);
-                //TODO: FIX THIS CHARACTER NAME;
-                GameInfoContent.GameInfo gameInfo = new GameInfoContent.GameInfo(gameid, Integer.valueOf(input[0]), Integer.valueOf(input[2]), Integer.valueOf(input[3]), Integer.valueOf(input[4]), input[5], "");
-                enterGameRoom(gameInfo);
-                Log.d("ADDGAME", "Entered Game Room");
+                info = new GameInfoContent.GameInfo(gameid, Integer.valueOf(input[0]), Integer.valueOf(input[2]), Integer.valueOf(input[3]), Integer.valueOf(input[4]), input[6], input[5]);
             } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            enterGameRoom(info);
         }
     }
 
@@ -230,11 +278,11 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
         replacefragment(mFragmentStack.peek());
     }
 
-    class JoinGameClass extends AsyncTask<GameInfoContent.GameInfo, Void, Boolean> {
+    class JoinGameClass extends AsyncTask<Object, Void, Boolean> {
         GameInfoContent.GameInfo info;
 
         @Override
-        protected Boolean doInBackground(GameInfoContent.GameInfo... infos) {
+        protected Boolean doInBackground(Object... input) {
             try {
                 Connection con = DatabaseConnectionService.getInstance("", "").getConnection();
                 CallableStatement cs;
@@ -246,14 +294,12 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
                 ResultSet rs = stmt.executeQuery();
                 rs.next();
                 int userID = rs.getInt(1);
-
+                info = (GameInfoContent.GameInfo) input[0];
                 cs.registerOutParameter(1, Types.INTEGER);
-                cs.setString(2, infos[0].gameName);
+                cs.setString(2, info.gameName);
                 cs.setInt(3, userID);
-                cs.setString(4, "GOUDAN");
-
+                cs.setString(4, (String) input[1]);
                 cs.executeUpdate();
-                info = infos[0];
                 int returnValue = cs.getInt(1);
                 return (returnValue == 1);
             } catch (Exception e) {

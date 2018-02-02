@@ -2,11 +2,6 @@ package rose_hulman.edu.monopolygame.Game;
 
 import android.os.AsyncTask;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import rose_hulman.edu.monopolygame.DatabaseConnection.DatabaseConnectionService;
 
 /**
@@ -34,34 +29,34 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
     class GameHandlerClass extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... commands) {
-            Connection con = mDBService.getConnection();
-            String[] input = commands;
-            String query = "Select * from Where";
-            Statement stmt = null;
-            try {
-
-                //TODO: Set up logic for purchase, walk, etc
-                switch (input.length) {
-                    case 0:
-                        //TODO: Pull Log from Database
-                        break;
-                    case 1:
-                        //TODO: Roll Dice
-                        break;
-                    case 2:
-                        //TODO: Perform action based on Prompt
-                        break;
-                }
-                stmt = con.createStatement();
-                ResultSet rs = stmt.executeQuery(query);
-                rs.next();
-                String temp = parseLog(rs.getString(1));
-                if (temp.equals(log)) {
-                    update = true;
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+//            Connection con = mDBService.getConnection();
+//            String[] input = commands;
+//            String query = "Select [log] from Game Where GameID = " + mGameViewFragment.getGameID();
+//            Statement stmt = null;
+//            try {
+//
+//                //TODO: Set up logic for purchase, walk, etc
+//                switch (input.length) {
+//                    case 0:
+//                        //TODO: Pull Log from Database
+//                        break;
+//                    case 1:
+//                        //TODO: Roll Dice
+//                        break;
+//                    case 2:
+//                        //TODO: Perform action based on Prompt
+//                        break;
+//                }
+//                stmt = con.createStatement();
+//                ResultSet rs = stmt.executeQuery(query);
+//                rs.next();
+//                String temp = parseLog(rs.getString(1));
+//                if (temp.equals(log)) {
+//                    update = true;
+//                }
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
             return null;
         }
 
