@@ -48,17 +48,28 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
         mFragmentStack.push(loginFrag);
         replacefragment(loginFrag);
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mFragmentStack.peek() instanceof PlayerInfoFragment || mFragmentStack.peek() instanceof GameViewFragment) {
-            (new QuitGameClass()).execute();
-        } else {
-            DatabaseConnectionService dbService = DatabaseConnectionService.getInstance("", "");
-            dbService.closeConnection();
-        }
-    }
+//
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        if (mFragmentStack.peek() instanceof PlayerInfoFragment || mFragmentStack.peek() instanceof GameViewFragment) {
+//            (new QuitGameClass()).execute();
+//        } else {
+//            DatabaseConnectionService dbService = DatabaseConnectionService.getInstance("", "");
+//            dbService.closeConnection();
+//        }
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        if (mFragmentStack.peek() instanceof PlayerInfoFragment || mFragmentStack.peek() instanceof GameViewFragment) {
+//            (new QuitGameClass()).execute();
+//        } else {
+//            DatabaseConnectionService dbService = DatabaseConnectionService.getInstance("", "");
+//            dbService.closeConnection();
+//        }
+//    }
 
     public void selectCharacter(final Object[] input, final Boolean isCreate) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -126,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
     public void StartGame(GameInfoContent.GameInfo gameInfo) {
         GameInfoContent.GameInfo[] infoList = new GameInfoContent.GameInfo[1];
         infoList[0] = gameInfo;
-        (new StartGameClass()).execute(infoList);
+        (new OrderSetterClass()).execute(infoList);
     }
 
     @Override
@@ -154,17 +165,15 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
             }
             return null;
         }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            (new OrderSetterClass()).execute();
-        }
     }
 
 
-    class OrderSetterClass extends AsyncTask<Void, Void, Void> {
+    class OrderSetterClass extends AsyncTask<GameInfoContent.GameInfo, Void, Void> {
+        private GameInfoContent.GameInfo[] gameInfo;
+
         @Override
-        protected Void doInBackground(Void... commands) {
+        protected Void doInBackground(GameInfoContent.GameInfo... gameInfos) {
+            this.gameInfo = gameInfos;
             Iterator<PlayerInfoContent.PlayerInfo> playerInfoIterator = PlayerInfoFragment.getIterator();
             Connection con = DatabaseConnectionService.getInstance("", "").getConnection();
             String query = "Update Character SET [Order] = ? Where UserID = ? ";
@@ -181,6 +190,11 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
                 e.printStackTrace();
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            (new StartGameClass()).execute(gameInfo);
         }
     }
 
@@ -246,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
                 int gameid = 0;
                 queue = "Select GameID from [Game] where GameName = ?";
                 stmt = con.prepareStatement(queue);
-                stmt.setString(1, input[5]);
+                stmt.setString(1, input[6]);
                 rs = stmt.executeQuery();
                 rs.next();
                 gameid = rs.getInt(1);

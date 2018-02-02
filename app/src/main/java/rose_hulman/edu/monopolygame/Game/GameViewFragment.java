@@ -102,15 +102,19 @@ public class GameViewFragment extends Fragment {
     }
 
     public void setRollDiceButtonStatus(boolean isActivate) {
-        this.rolldiceButton.setActivated(isActivate);
+        this.rolldiceButton.setEnabled(isActivate);
     }
 
     public void setConfirmButtonStatus(boolean isActivate) {
-        this.confirmButton.setActivated(isActivate);
+        this.confirmButton.setEnabled(isActivate);
     }
 
     public void setRejectButtonStatus(boolean isActivate) {
-        this.rejectButton.setActivated(isActivate);
+        this.rejectButton.setEnabled(isActivate);
+    }
+
+    public int getMapID() {
+        return mGameInfo.mapIndex;
     }
 
     /**
