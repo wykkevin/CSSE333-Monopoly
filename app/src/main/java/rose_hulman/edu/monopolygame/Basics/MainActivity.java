@@ -8,7 +8,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -110,10 +113,90 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
         builder.setTitle("Create Game");
         View view = getLayoutInflater().inflate(R.layout.create_game_dialog, null, false);
         builder.setView(view);
-        final EditText MapIndex = (EditText) view.findViewById(R.id.dialog_mapIndex);
-        final EditText InitMoney = (EditText) view.findViewById(R.id.dialog_starting_money);
-        final EditText maxTurns = (EditText) view.findViewById(R.id.dialog_maxturns);
-        final EditText TargetAmount = (EditText) view.findViewById(R.id.dialog_TargetAmount);
+
+        final String[] mpIndex = {""};
+        final String[] initMoney = {""};
+        final String[] maxTurn = {""};
+        final String[] targetAmount = {""};
+
+        Spinner MapIndex = (Spinner) view.findViewById(R.id.dialog_mapIndex);
+        ArrayAdapter<CharSequence> MPadapter = ArrayAdapter.createFromResource(this,
+                R.array.Map_IDs, android.R.layout.simple_spinner_item);
+        MPadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        MapIndex.setAdapter(MPadapter);
+
+
+        MapIndex.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mpIndex[0] = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                mpIndex[0] = (String) parent.getItemAtPosition(0);
+            }
+        });
+
+        final Spinner InitMoney = (Spinner) view.findViewById(R.id.dialog_starting_money);
+        ArrayAdapter<CharSequence> IMadapter = ArrayAdapter.createFromResource(this,
+                R.array.Init_Money, android.R.layout.simple_spinner_item);
+        IMadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        InitMoney.setAdapter(IMadapter);
+
+        InitMoney.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                initMoney[0] = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                initMoney[0] = (String) parent.getItemAtPosition(0);
+            }
+        });
+
+        final Spinner maxTurns = (Spinner) view.findViewById(R.id.dialog_maxturns);
+        ArrayAdapter<CharSequence> MTadapter = ArrayAdapter.createFromResource(this,
+                R.array.Max_Turn, android.R.layout.simple_spinner_item);
+        MTadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        maxTurns.setAdapter(MTadapter);
+
+        maxTurns.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                maxTurn[0] = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                maxTurn[0] = (String) parent.getItemAtPosition(0);
+            }
+        });
+
+        final Spinner TargetAmount = (Spinner) view.findViewById(R.id.dialog_TargetAmount);
+        ArrayAdapter<CharSequence> TAadapter = ArrayAdapter.createFromResource(this,
+                R.array.Target_Amount, android.R.layout.simple_spinner_item);
+        TAadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        TargetAmount.setAdapter(TAadapter);
+
+        TargetAmount.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                targetAmount[0] = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                targetAmount[0] = (String) parent.getItemAtPosition(0);
+            }
+        });
+
+
+//        final EditText MapIndex = (EditText) view.findViewById(R.id.dialog_mapIndex);
+//        final EditText InitMoney = (EditText) view.findViewById(R.id.dialog_starting_money);
+//        final EditText maxTurns = (EditText) view.findViewById(R.id.dialog_maxturns);
+//        final EditText TargetAmount = (EditText) view.findViewById(R.id.dialog_TargetAmount);
         final EditText GameName = (EditText) view.findViewById(R.id.dialog_GameName);
 
         builder.setNegativeButton("Cancel", null);
@@ -121,11 +204,11 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String[] input = new String[7];
-                input[0] = MapIndex.getText().toString();
+                input[0] = mpIndex[0];
                 input[1] = UserName;
-                input[2] = InitMoney.getText().toString();
-                input[3] = maxTurns.getText().toString();
-                input[4] = TargetAmount.getText().toString();
+                input[2] = initMoney[0];
+                input[3] = maxTurn[0];
+                input[4] = targetAmount[0];
                 input[6] = GameName.getText().toString();
                 selectCharacter(input, true);
             }

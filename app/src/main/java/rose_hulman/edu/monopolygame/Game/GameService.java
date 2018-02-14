@@ -50,6 +50,11 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                 while (rs.next()) {
                     placeIDMap.put(rs.getInt(1), rs.getString(2));
                 }
+                CallableStatement cs;
+                cs = mDBService.getConnection().prepareCall("{call Import_place_from_layout(?,?)}");
+                cs.setInt(1, mGameViewFragment.getMapID());
+                cs.setInt(2, mGameViewFragment.getGameID());
+                cs.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -77,7 +82,6 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                 ResultSet rs = getUsername.executeQuery();
                 rs.next();
                 userID = rs.getInt(1);
-                //TODO: Set up logic for purchase, walk, etc
                 switch (input.length) {
                     case 0:
                         Statement stmt = con.createStatement();
@@ -106,7 +110,13 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                         cs.executeUpdate();
                         break;
                     case 2:
-                        //TODO: Perform action based on Prompt
+                        if (commands[0].equals("confirm")) {
+                            cs = parsePrompt(commands[1]);
+                            cs.executeUpdate();
+                        }
+                        cs = con.prepareCall("{call Change_Order(?)}");
+                        cs.setInt(1, mGameViewFragment.getGameID());
+                        cs.executeUpdate();
                         break;
                 }
             } catch (SQLException e) {
@@ -146,20 +156,52 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                         isWaitForDecision = false;
                         mGameViewFragment.setRejectButtonStatus(isWaitForDecision);
                         mGameViewFragment.setConfirmButtonStatus(isWaitForDecision);
-                        (new GameHandlerClass()).execute("confirm", prompt);
+                        String[] input = new String[2];
+                        input[0] = "confirm";
+                        input[1] = prompt;
+                        (new GameHandlerClass()).execute(input);
                         break;
                     case 2:
                         decision = 0;
                         isWaitForDecision = false;
                         mGameViewFragment.setRejectButtonStatus(isWaitForDecision);
                         mGameViewFragment.setConfirmButtonStatus(isWaitForDecision);
-                        (new GameHandlerClass()).execute("reject", prompt);
+                        input = new String[2];
+                        input[0] = "reject";
+                        input[1] = prompt;
+                        (new GameHandlerClass()).execute(input);
                         break;
                 }
             } else {
                 (new GameHandlerClass()).execute(new String[0]);
             }
         }
+    }
+
+    private CallableStatement parsePrompt(String prompt) {
+        String[] toParse = prompt.split(" ");
+        String cmd = toParse[0];
+        String pid = toParse[1];
+        CallableStatement cs = null;
+        try {
+            switch (cmd) {
+                case "-purchase":
+                    cs = mDBService.getConnection().prepareCall("{call Purchase_Land(?,?,?)}");
+                    break;
+                case "-upgrade":
+                    cs = mDBService.getConnection().prepareCall("{call Upgrade_Building(?,?,?)}");
+                    break;
+                case "-pay":
+                    cs = mDBService.getConnection().prepareCall("{call Pay(?,?,?)}");
+                    break;
+            }
+            cs.setInt(1, userID);
+            cs.setInt(2, mGameViewFragment.getGameID());
+            cs.setInt(3, Integer.parseInt(pid));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cs;
     }
 
     private String parseLog(String input) {
@@ -195,9 +237,89 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                     i++;
                     String placeOwner = toParse[i];
                     i++;
+                    String posPrice = toParse[i];
+                    i++;
+                    String upgradeCost = toParse[i];
+                    i++;
+                    String curlevel = toParse[i];
+                    i++;
+                    String maxlevel = toParse[i];
                     String startposname = placeIDMap.get(Integer.valueOf(startposid));
                     String endposname = placeIDMap.get(Integer.valueOf(endposid));
                     display = activePlayerName + " started from " + startposname + ", walked " + steps + " steps and arrived at " + endposname + "\n";
+                    if (activePlayerName.equals(mGameViewFragment.getChrName())) {
+                        prompt = "";
+                        if (placeOwner.equals(activePlayerName)) {
+                            this.isWaitForDecision = true;
+                            if (!curlevel.equals(maxlevel)) {
+                                display += "Do you want to upgrade " + endposname + " from level " + curlevel + " to level " + (Integer.valueOf(curlevel) + 1) + "buy paying " + upgradeCost + " kang?\n";
+                                prompt += "-upgrade ";
+                            }
+                        } else if (placeOwner.equals("NULL")) {
+                            this.isWaitForDecision = true;
+                            display += "Do you want to purchase " + endposname + " by paying " + posPrice + " kang?\n";
+                            prompt += "-purchase ";
+                        } else {
+                            prompt += "-pay ";
+                        }
+                        prompt += endposid;
+                    } else {
+                        isWaitForDecision = false;
+                    }
+                    break;
+                case "-W":
+                    i++;
+                    String winnerName = toParse[i];
+                    display = winnerName + " wins the game! \n";
+                    break;
+                case "-L":
+                    i++;
+                    String loserName = toParse[i];
+                    display = loserName + " loses the game! \n";
+                    break;
+                case "-Pay":
+                    i++;
+                    String payername = toParse[i];
+                    i++;
+                    String ownername = toParse[i];
+                    i++;
+                    String price = toParse[i];
+                    i++;
+                    String payafter = toParse[i];
+                    i++;
+                    String ownafter = toParse[i];
+                    i++;
+                    display = payername + " paid " + ownername + " " + price + " kang.\n";
+                    display += payername + " now has " + payafter + " kang.\n";
+                    display += ownername + " now has " + ownafter + " kang.\n";
+                    break;
+                case "-Upgrade":
+                    i++;
+                    String charname = toParse[i];
+                    i++;
+                    String pid = toParse[i];
+                    i++;
+                    price = toParse[i];
+                    i++;
+                    String moneyafter = toParse[i];
+                    i++;
+                    String levelafter = toParse[i];
+                    display = charname + " paid " + price + " kang and upgraded " + placeIDMap.get(Integer.valueOf(pid)) + " to " + levelafter + ".\n";
+                    display += charname + " now has " + moneyafter + " kang.\n";
+                    break;
+                case "-Purchase":
+                    i++;
+                    charname = toParse[i];
+                    i++;
+                    pid = toParse[i];
+                    i++;
+                    price = toParse[i];
+                    i++;
+                    moneyafter = toParse[i];
+                    display = charname + " paid " + price + " kang and purchased " + placeIDMap.get(Integer.valueOf(pid)) + ".\n";
+                    display += charname + " now has " + moneyafter + " kang.\n";
+                    break;
+                case "-Card":
                     break;
             }
         }

@@ -15,5 +15,27 @@
     <string name="error_field_required">This field is required</string>
     <string name="action_enter_lobby">Enter Lobby</string>
     <string name="log_out">Log out</string>
+    <string-array name="Map_IDs">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 
+    <string-array name="Init_Money">
+        <item>3000</item>
+        <item>5000</item>
+        <item>7000</item>
+    </string-array>
+
+    <string-array name="Target_Amount">
+        <item>10000</item>
+        <item>12500</item>
+        <item>15000</item>
+    </string-array>
+
+    <string-array name="Max_Turn">
+        <item>50</item>
+        <item>100</item>
+        <item>250</item>
+        <item>500</item>
+    </string-array>
 </resources>

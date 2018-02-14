@@ -1,7 +1,6 @@
 package rose_hulman.edu.monopolygame.GameRoom;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -61,10 +60,8 @@ public class PlayerInfoContent {
             try {
                 Statement stmt = con.createStatement();
                 String query = "Select * from [User] where GameID = " + gameID;
-                Log.d("PICPIC", query);
                 ResultSet rs = stmt.executeQuery(query);
                 while (rs.next()) {
-                    Log.d("PICPIC", "SELECTED");
                     int userid = rs.getInt(1);
                     String userName = rs.getString(4);
                     PlayerInfo info = new PlayerInfo(userid, userName);
