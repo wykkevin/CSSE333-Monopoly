@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -76,7 +77,11 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
 
     public void selectCharacter(final Object[] input, final Boolean isCreate) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Create Game");
+        if (isCreate) {
+            builder.setTitle("Create Game");
+        } else {
+            builder.setTitle("Join Game");
+        }
         View view = getLayoutInflater().inflate(R.layout.select_character_dialog, null, false);
         builder.setView(view);
         final EditText CharacterName = (EditText) view.findViewById(R.id.dialog_characterName);
@@ -397,6 +402,8 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
                 cs.setInt(3, userID);
                 cs.setString(4, (String) input[1]);
                 cs.executeUpdate();
+                info.setCharacterName((String) input[1]);
+                Log.d("PLAYERNAME:", (String) input[1]);
                 int returnValue = cs.getInt(1);
                 return (returnValue == 1);
             } catch (Exception e) {

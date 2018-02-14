@@ -96,7 +96,7 @@ public class GameInfoContent {
         public final int MaxTurns;
         public final int TargetAmount;
         public final String gameName;
-        public final String characterName;
+        public String characterName;
 
         public GameInfo(int gameid, int mapIndex, int initMoney, int maxTurns, int targetAmount, String gameName, String characterName) {
             this.gameid = gameid;
@@ -145,5 +145,10 @@ public class GameInfoContent {
             dest.writeString(gameName);
             dest.writeString(characterName);
         }
+
+        public void setCharacterName(String name) {
+            this.characterName = characterName;
+        }
+
     }
 }

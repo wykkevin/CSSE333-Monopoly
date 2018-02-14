@@ -30,6 +30,8 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
     private boolean pressedExit = false;
     private String prompt = "";
     private int userID;
+    private int endturn = 0;
+
 
     private HashMap<Integer, String> placeIDMap = new HashMap<>();
 
@@ -101,6 +103,7 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                         setReceived.executeUpdate();
                         break;
                     case 1:
+                        update = false;
                         int forwardStep = (int) (Math.random() * 6) + 1;
                         CallableStatement cs;
                         cs = con.prepareCall("{call Go_Forward(?,?,?)}");
@@ -110,9 +113,28 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                         cs.executeUpdate();
                         break;
                     case 2:
+                        update = false;
                         if (commands[0].equals("confirm")) {
                             cs = parsePrompt(commands[1]);
                             cs.executeUpdate();
+                            endturn = 1;
+                        } else {
+                            endturn = 2;
+                        }
+                        break;
+                    case 3:
+                        if (input[0].equals("1")) {
+                            stmt = con.createStatement();
+                            logResultSet = stmt.executeQuery(getLogQuery);
+                            logResultSet.next();
+                            received = logResultSet.getString(1);
+                            temp = parseLog(received);
+                            if (!temp.equals(log)) {
+                                update = true;
+                                log = temp;
+                            } else {
+                                update = false;
+                            }
                         }
                         cs = con.prepareCall("{call Change_Order(?)}");
                         cs.setInt(1, mGameViewFragment.getGameID());
@@ -132,10 +154,8 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
             }
             if (update) {
                 mGameViewFragment.updateText(log);
+                update = false;
             }
-            mGameViewFragment.setRollDiceButtonStatus(isWaitForRollDice);
-            mGameViewFragment.setRejectButtonStatus(isWaitForDecision);
-            mGameViewFragment.setConfirmButtonStatus(isWaitForDecision);
 
             if (isWaitForRollDice) {
                 if (pressedRollDice) {
@@ -172,9 +192,17 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                         (new GameHandlerClass()).execute(input);
                         break;
                 }
+            } else if (endturn != 0) {
+                String[] input = new String[3];
+                input[0] = String.valueOf(endturn);
+                endturn = 0;
+                (new GameHandlerClass()).execute(input);
             } else {
                 (new GameHandlerClass()).execute(new String[0]);
             }
+            mGameViewFragment.setRollDiceButtonStatus(isWaitForRollDice);
+            mGameViewFragment.setRejectButtonStatus(isWaitForDecision);
+            mGameViewFragment.setConfirmButtonStatus(isWaitForDecision);
         }
     }
 
@@ -244,10 +272,16 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                     String curlevel = toParse[i];
                     i++;
                     String maxlevel = toParse[i];
+                    i++;
+                    String currentMoney = toParse[i];
+                    i++;
+                    String type = toParse[i];
+                    i++;
+                    String userid = toParse[i];
                     String startposname = placeIDMap.get(Integer.valueOf(startposid));
                     String endposname = placeIDMap.get(Integer.valueOf(endposid));
-                    display = activePlayerName + " started from " + startposname + ", walked " + steps + " steps and arrived at " + endposname + "\n";
-                    if (activePlayerName.equals(mGameViewFragment.getChrName())) {
+                    display = activePlayerName + " started from " + startposname + ", walked " + steps + " steps and arrived at " + endposname + ".\n" + "This player currently has " + currentMoney + " kang. \n";
+                    if (Integer.valueOf(userid) == userID) {
                         prompt = "";
                         if (placeOwner.equals(activePlayerName)) {
                             this.isWaitForDecision = true;
@@ -261,6 +295,8 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                             prompt += "-purchase ";
                         } else {
                             prompt += "-pay ";
+                            this.isWaitForDecision = true;
+                            decision = 1;
                         }
                         prompt += endposid;
                     } else {
