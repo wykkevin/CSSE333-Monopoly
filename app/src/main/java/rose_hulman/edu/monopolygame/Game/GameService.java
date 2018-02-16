@@ -1,6 +1,7 @@
 package rose_hulman.edu.monopolygame.Game;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -31,6 +32,7 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
     private String prompt = "";
     private int userID;
     private int endturn = 0;
+    private boolean endgame = false;
 
 
     private HashMap<Integer, String> placeIDMap = new HashMap<>();
@@ -97,10 +99,10 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                         } else {
                             update = false;
                         }
-                        String setReceivedQuery = "Update Character SET Received = 1 Where UserID = ? ";
-                        PreparedStatement setReceived = con.prepareStatement(setReceivedQuery);
-                        setReceived.setInt(1, userID);
-                        setReceived.executeUpdate();
+//                        String setReceivedQuery = "Update Character SET Received = 1 Where UserID = ? ";
+//                        PreparedStatement setReceived = con.prepareStatement(setReceivedQuery);
+//                        setReceived.setInt(1, userID);
+//                        setReceived.executeUpdate();
                         break;
                     case 1:
                         update = false;
@@ -118,7 +120,7 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                             cs = parsePrompt(commands[1]);
                             cs.executeUpdate();
                             endturn = 1;
-                        } else {
+                        } else if (commands[0].equals("reject")) {
                             endturn = 2;
                         }
                         break;
@@ -136,9 +138,11 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                                 update = false;
                             }
                         }
-                        cs = con.prepareCall("{call Change_Order(?)}");
-                        cs.setInt(1, mGameViewFragment.getGameID());
-                        cs.executeUpdate();
+                        if (!endgame) {
+                            cs = con.prepareCall("{call Change_Order(?)}");
+                            cs.setInt(1, mGameViewFragment.getGameID());
+                            cs.executeUpdate();
+                        }
                         break;
                 }
             } catch (SQLException e) {
@@ -156,7 +160,9 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                 mGameViewFragment.updateText(log);
                 update = false;
             }
-
+            if (endgame) {
+                setButtonInvisible();
+            }
             if (isWaitForRollDice) {
                 if (pressedRollDice) {
                     pressedRollDice = false;
@@ -191,6 +197,16 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                         input[1] = prompt;
                         (new GameHandlerClass()).execute(input);
                         break;
+//                    case 3:
+//                        decision = 0;
+//                        isWaitForDecision = false;
+//                        mGameViewFragment.setRejectButtonStatus(isWaitForDecision);
+//                        mGameViewFragment.setConfirmButtonStatus(isWaitForDecision);
+//                        input = new String[2];
+//                        input[0] = "lose";
+//                        input[1] = prompt;
+//                        (new GameHandlerClass()).execute(input);
+//                        break;
                 }
             } else if (endturn != 0) {
                 String[] input = new String[3];
@@ -209,7 +225,10 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
     private CallableStatement parsePrompt(String prompt) {
         String[] toParse = prompt.split(" ");
         String cmd = toParse[0];
-        String pid = toParse[1];
+        String pid = "";
+        if (toParse.length > 1) {
+            pid = toParse[1];
+        }
         CallableStatement cs = null;
         try {
             switch (cmd) {
@@ -222,10 +241,24 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                 case "-pay":
                     cs = mDBService.getConnection().prepareCall("{call Pay(?,?,?)}");
                     break;
+                case "-lose":
+                    cs = mDBService.getConnection().prepareCall("{call Order_Reset(?)}");
+                    break;
+                case "-card":
+                    cs = mDBService.getConnection().prepareCall("{call Use_Card(?,?)}");
             }
-            cs.setInt(1, userID);
-            cs.setInt(2, mGameViewFragment.getGameID());
-            cs.setInt(3, Integer.parseInt(pid));
+            if (cmd.equals("-card")) {
+                int cardnumber = (int) (Math.random() * 13) + 1;
+                cs.setInt(1, userID);
+                cs.setInt(2, cardnumber);
+            } else if (cmd.equals("-lose")) {
+                cs.setInt(1, mGameViewFragment.getGameID());
+                Log.d("CCCCCCCCCCCCCCCCCCCC", "I Lost!!!!!!!");
+            } else {
+                cs.setInt(1, userID);
+                cs.setInt(2, mGameViewFragment.getGameID());
+                cs.setInt(3, Integer.parseInt(pid));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -250,6 +283,8 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                     String UID = toParse[i];
                     if (Integer.valueOf(UID) == userID) {
                         this.isWaitForRollDice = true;
+                    } else {
+                        this.isWaitForRollDice = false;
                     }
                     display = "Turn " + turnNumber + ": Character " + activePlayerName + "'s move.\n";
                     break;
@@ -283,16 +318,32 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                     display = activePlayerName + " started from " + startposname + ", walked " + steps + " steps and arrived at " + endposname + ".\n" + "This player currently has " + currentMoney + " kang. \n";
                     if (Integer.valueOf(userid) == userID) {
                         prompt = "";
-                        if (placeOwner.equals(activePlayerName)) {
+                        if (type.equals("card")) {
+                            prompt += "-card";
                             this.isWaitForDecision = true;
-                            if (!curlevel.equals(maxlevel)) {
-                                display += "Do you want to upgrade " + endposname + " from level " + curlevel + " to level " + (Integer.valueOf(curlevel) + 1) + "buy paying " + upgradeCost + " kang?\n";
-                                prompt += "-upgrade ";
+                            decision = 1;
+                            break;
+                        } else if (placeOwner.equals(activePlayerName)) {
+                            this.isWaitForDecision = true;
+                            prompt += "-upgrade ";
+                            if (!curlevel.equals(maxlevel) && Double.valueOf(upgradeCost) < Double.valueOf(currentMoney)) {
+                                display += "Do you want to upgrade " + endposname + " from level " + curlevel + " to level " + (Integer.valueOf(curlevel) + 1) + " by paying " + upgradeCost + " kang?\n";
+                            } else if (curlevel.equals(maxlevel)) {
+                                display += endposname + " is at its max level!\n";
+                                decision = 2;
+                            } else {
+                                display += "You cannot afford to upgrade " + endposname + " from level " + curlevel + " to level " + (Integer.valueOf(curlevel) + 1) + "!\n";
+                                decision = 2;
                             }
                         } else if (placeOwner.equals("NULL")) {
                             this.isWaitForDecision = true;
-                            display += "Do you want to purchase " + endposname + " by paying " + posPrice + " kang?\n";
                             prompt += "-purchase ";
+                            if (Double.valueOf(posPrice) < Double.valueOf(currentMoney)) {
+                                display += "Do you want to purchase " + endposname + " by paying " + posPrice + " kang?\n";
+                            } else {
+                                display += "You can't afford " + endposname + "!\n";
+                                decision = 2;
+                            }
                         } else {
                             prompt += "-pay ";
                             this.isWaitForDecision = true;
@@ -307,11 +358,20 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                     i++;
                     String winnerName = toParse[i];
                     display = winnerName + " wins the game! \n";
+                    endgame = true;
                     break;
                 case "-L":
                     i++;
                     String loserName = toParse[i];
+                    i++;
+                    String id = toParse[i];
                     display = loserName + " loses the game! \n";
+                    if (Integer.parseInt(id) == userID) {
+                        this.isWaitForDecision = true;
+                        prompt = "-lose";
+                        decision = 1;
+                        endgame = true;
+                    }
                     break;
                 case "-Pay":
                     i++;
@@ -328,6 +388,9 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                     display = payername + " paid " + ownername + " " + price + " kang.\n";
                     display += payername + " now has " + payafter + " kang.\n";
                     display += ownername + " now has " + ownafter + " kang.\n";
+                    if (Double.valueOf(ownafter) < 0) {
+                        endgame = true;
+                    }
                     break;
                 case "-Upgrade":
                     i++;
@@ -356,10 +419,33 @@ public class GameService implements GameViewFragment.GameMapFragmentListener {
                     display += charname + " now has " + moneyafter + " kang.\n";
                     break;
                 case "-Card":
+                    Log.d("CCCCCCCCCCCCCCCCCCCC", toParse[1]);
+                    i++;
+                    String des = toParse[i].replace('_', ' ');
+                    i++;
+                    String cardeffect = toParse[i];
+                    i++;
+                    moneyafter = toParse[i];
+                    i++;
+                    charname = toParse[i];
+                    display = charname + " just " + des + "\n";
+                    if (Double.valueOf(cardeffect) > 0) {
+                        display += charname + " gained " + cardeffect + " Kang.\n ";
+                    } else {
+                        display += charname + " lost " + cardeffect.substring(1) + " Kang.\n ";
+                    }
+                    display += charname + " now has " + moneyafter + " kang.\n";
+                    if (Double.valueOf(moneyafter) < 0) {
+                        endgame = true;
+                    }
                     break;
             }
         }
         return display;
+    }
+
+    public void setButtonInvisible() {
+        this.mGameViewFragment.setButtonInvisible();
     }
 
 

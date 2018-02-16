@@ -7,90 +7,88 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:gravity = "center"
             android:layout_margin="@dimen/activity_horizontal_margin"
-            android:text = "Map Index:"
-            />
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:text="Map Index:" />
 
         <Spinner
-            android:layout_weight="1"
             android:id="@+id/dialog_mapIndex"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_weight="0.5"
             android:inputType="number" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:gravity = "center"
             android:layout_margin="@dimen/activity_horizontal_margin"
-            android:text = "Initial Money:"
-            />
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:text="Initial Money:" />
 
         <Spinner
-            android:layout_weight="1"
             android:id="@+id/dialog_starting_money"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_horizontal_margin"/>
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_weight="0.5" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:gravity="right"
+        android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:gravity = "center"
-            android:text = "Max Turns:"
             android:layout_margin="@dimen/activity_horizontal_margin"
-            />
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:text="Max Turns:" />
 
         <Spinner
-            android:layout_weight="1"
             android:id="@+id/dialog_maxturns"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_horizontal_margin"/>
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_weight="0.5" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:gravity="right"
+        android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:gravity = "center"
-            android:text = "Target Amount:"
             android:layout_margin="@dimen/activity_horizontal_margin"
-            />
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:text="Target Amount:" />
 
         <Spinner
-            android:layout_weight="1"
             android:id="@+id/dialog_TargetAmount"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_horizontal_margin"/>
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_weight="0.5" />
     </LinearLayout>
 
 
@@ -100,5 +98,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:hint="Input Game Name"
-        android:inputType="text" />
+        android:inputType="text"
+        android:singleLine="true" />
 </LinearLayout>

@@ -63,7 +63,7 @@ public class PlayerInfoContent {
                 ResultSet rs = stmt.executeQuery(query);
                 while (rs.next()) {
                     int userid = rs.getInt(1);
-                    String userName = rs.getString(4);
+                    String userName = rs.getString(3);
                     PlayerInfo info = new PlayerInfo(userid, userName);
                     addItem(info);
                 }

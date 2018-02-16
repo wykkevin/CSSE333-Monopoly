@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import rose_hulman.edu.monopolygame.Lobby.GameInfoContent;
@@ -31,12 +32,13 @@ public class GameViewFragment extends Fragment {
     private Button confirmButton;
     private Button rejectButton;
     private TextView mTextView;
+    private ScrollView scroll;
 
     public GameViewFragment() {
         // Required empty public constructor
     }
 
-    public int getGameID(){
+    public int getGameID() {
         return mGameInfo.gameid;
     }
 
@@ -51,6 +53,7 @@ public class GameViewFragment extends Fragment {
 
     public void updateText(String log) {
         mTextView.append(log);
+        scroll.fullScroll(View.FOCUS_DOWN);
     }
 
     @Override
@@ -67,6 +70,7 @@ public class GameViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_game_map, container, false);
         mListener = new GameService(this);
         mTextView = (TextView) view.findViewById(R.id.game_logview);
+        scroll = (ScrollView) view.findViewById(R.id.game_scrollview);
         rolldiceButton = (Button) view.findViewById(R.id.action_roll_dice);
         rolldiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +92,7 @@ public class GameViewFragment extends Fragment {
                 mListener.reject();
             }
         });
+
         return view;
     }
 
@@ -119,6 +124,12 @@ public class GameViewFragment extends Fragment {
 
     public String getChrName() {
         return mGameInfo.characterName;
+    }
+
+    public void setButtonInvisible() {
+        this.rejectButton.setVisibility(View.GONE);
+        this.confirmButton.setVisibility(View.GONE);
+        this.rolldiceButton.setVisibility(View.GONE);
     }
 
     /**

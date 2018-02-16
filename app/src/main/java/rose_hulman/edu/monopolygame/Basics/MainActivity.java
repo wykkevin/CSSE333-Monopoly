@@ -30,6 +30,7 @@ import rose_hulman.edu.monopolygame.GameRoom.PlayerInfoFragment;
 import rose_hulman.edu.monopolygame.Lobby.GameInfoContent;
 import rose_hulman.edu.monopolygame.Lobby.GameInfoFragment;
 import rose_hulman.edu.monopolygame.R;
+import rose_hulman.edu.monopolygame.Scoreboard.ScoreboardFragment;
 import rose_hulman.edu.monopolygame.WelcomePages.LoginFragment;
 import rose_hulman.edu.monopolygame.WelcomePages.WelcomeFragment;
 
@@ -424,7 +425,8 @@ public class MainActivity extends AppCompatActivity implements GameInfoFragment.
 
     @Override
     public void openScoreboard() {
-        //Todo: Show Scoreboard
+        mFragmentStack.push(ScoreboardFragment.newInstance());
+        replacefragment(mFragmentStack.peek());
     }
 
 
